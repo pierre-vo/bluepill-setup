@@ -5,12 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug",
-            "program": "${workspaceFolder}/build/MyMainExe",
-            "args": [],
-            "cwd": "${workspaceFolder}"
+            "name": "BMP attach",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/bluepill-base.elf",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "bmp",
+            "interface": "swd",
+            "device": "STM32F103",
+            "BMPGDBSerialPort": "/dev/ttyACM0",
+            // "runToMain": true,
+            // "preLaunchCommands": [
+            //     "set async-remote false",
+            //     "set remote-timeout 20"
+            // ],
+            "preRestartCommands": [
+                "enable breakpoint",
+                "break main"
+            ]
         }
     ]
 }
