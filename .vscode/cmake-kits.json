@@ -1,0 +1,6 @@
+[
+    {
+        "name": "bluepill",
+        "toolchainFile": "${workspaceFolder}/arm-toolchain.cmake"
+    }
+]

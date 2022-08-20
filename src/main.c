@@ -1,6 +1,7 @@
 #include "stm32f10x.h"
 #include "system_stm32f10x.h"
 #include "core_cm3.h"
+#include <stdbool.h>
 
 static void dummySleep(uint32_t cnt)
 {
@@ -11,6 +12,7 @@ static void dummySleep(uint32_t cnt)
 
 static void setupUSART()
 {
+    // Tx on PA.9
     RCC->APB2ENR  |=  RCC_APB2ENR_IOPAEN;   //Enable port A clock
     RCC->APB2RSTR |=  RCC_APB2RSTR_IOPARST; //Reset port A
     RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPARST;
@@ -43,31 +45,25 @@ static void writeUSART(const char *str)
 
 static void setupLED()
 {
-    RCC->APB2ENR  |= RCC_APB2ENR_IOPCEN;   //Enable port C clock
-    RCC->APB2RSTR |= RCC_APB2RSTR_IOPCRST; //Reset port C
-    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPCRST;
+    RCC->APB2ENR  |= RCC_APB2ENR_IOPBEN;   //Enable port B clock
+    RCC->APB2RSTR |= RCC_APB2RSTR_IOPBRST; //Reset port B
+    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPBRST;
 
-    GPIOC->CRH = (GPIOC->CRH & ~GPIO_CRH_CNF13) | GPIO_CRH_MODE13_1; //Output 2 MHz
-}
-
-static int keepGoing()
-{
-    //This is just to prevent CLion from crying about infinite loops
-    return 1;
+    GPIOB->CRH = (GPIOB->CRH & ~GPIO_CRH_CNF13) | GPIO_CRH_MODE13_1; //Output 2 MHz
 }
 
 void main()
 {
     //Called by startup.s
-
     SystemInit(); //Initialize clock to 72 MHz
     setupUSART(); //Initialize USART to 115200 bauds
     setupLED();
 
-    while(keepGoing()) {
+    while(true) {
         //Blink
-        GPIOC->ODR ^= GPIO_ODR_ODR13;
+        GPIOB->ODR ^= GPIO_ODR_ODR2;
         writeUSART("It works!\r\n");
+        ITM_SendChar('a');
         dummySleep(500000U);
     }
 }
