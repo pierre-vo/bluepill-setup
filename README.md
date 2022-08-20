@@ -27,3 +27,6 @@ add_executable(MainTest src/main.c)
 `cmake -B_builds -G "Ninja Multi-Config" --toolchain /path/to/xxx-toolchain.cmake`
 
 `cmake -B_builds -G "Ninja Multi-Config" --toolchain xxx-toolchain.cmake`
+
+
+https://github.com/montoyo/bluepill-base
