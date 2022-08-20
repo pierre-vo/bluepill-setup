@@ -17,13 +17,13 @@ cmake ../ -D"CMAKE_MAKE_PROGRAM:PATH=C:/App/msys64/usr/bin/make.exe" -G "MSYS Ma
 
 ```
 cmake_minimum_required(VERSION 3.0.0)
-project(AlstomTest VERSION 0.1.0)
+project(MainTest VERSION 0.1.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # set(CMAKE_C_CLANG_TIDY clang-tidy -checks=-*,clang-diagnostic-*,clang-analyzer-*,readability-*)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
-add_executable(AlstomTest src/main.c)
+add_executable(MainTest src/main.c)
 ```
 
-`cmake -B_builds -G "Ninja Multi-Config" --toolchain /path/to/iar-toolchain.cmake`
+`cmake -B_builds -G "Ninja Multi-Config" --toolchain /path/to/xxx-toolchain.cmake`
 
-`cmake -B_builds -G "Ninja Multi-Config" --toolchain iar-toolchain.cmake`
+`cmake -B_builds -G "Ninja Multi-Config" --toolchain xxx-toolchain.cmake`
