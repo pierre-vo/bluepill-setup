@@ -43,13 +43,22 @@ static void writeUSART(const char *str)
     }
 }
 
-static void setupLED()
+static void setupLED_B()
 {
     RCC->APB2ENR  |= RCC_APB2ENR_IOPBEN;   //Enable port B clock
     RCC->APB2RSTR |= RCC_APB2RSTR_IOPBRST; //Reset port B
     RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPBRST;
 
-    GPIOB->CRH = (GPIOB->CRH & ~GPIO_CRH_CNF13) | GPIO_CRH_MODE13_1; //Output 2 MHz
+    GPIOB->CRL = (GPIOB->CRL & ~GPIO_CRL_CNF2) | GPIO_CRL_MODE2_1; //Output 2 MHz
+}
+
+static void setupLED_C()
+{
+    RCC->APB2ENR  |= RCC_APB2ENR_IOPCEN;   //Enable port C clock
+    RCC->APB2RSTR |= RCC_APB2RSTR_IOPCRST; //Reset port C
+    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPCRST;
+
+    GPIOC->CRH = (GPIOC->CRH & ~GPIO_CRH_CNF13) | GPIO_CRH_MODE13_1; //Output 2 MHz
 }
 
 void main()
@@ -57,11 +66,13 @@ void main()
     //Called by startup.s
     SystemInit(); //Initialize clock to 72 MHz
     setupUSART(); //Initialize USART to 115200 bauds
-    setupLED();
+    setupLED_B();
+    setupLED_C();
 
     while(true) {
         //Blink
-        GPIOB->ODR ^= GPIO_ODR_ODR2;
+        GPIOB->ODR ^= GPIO_ODR_ODR2; // B2, not working?
+        GPIOC->ODR ^= GPIO_ODR_ODR13; // C13
         writeUSART("It works!\r\n");
         ITM_SendChar('a');
         dummySleep(500000U);
