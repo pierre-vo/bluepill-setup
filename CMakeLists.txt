@@ -7,13 +7,13 @@ project(bluepill-base
         LANGUAGES C ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_C_CLANG_TIDY clang-tidy -checks=-*,clang-diagnostic-*,clang-analyzer-*,readability-*)
+#set(CMAKE_C_CLANG_TIDY clang-tidy -p build/compile_commands.json -checks=-*,clang-diagnostic-*,clang-analyzer-*,readability-*)
 add_compile_options(-Wall -Wextra -pedantic -Werror)
 
 set(LINK_SCRIPT "${CMAKE_SOURCE_DIR}/libs/stm/stm32f.ld")
 
 # Cross-compiling settings
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/arm-toolchain.cmake")
+# set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/arm-toolchain.cmake")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINK_SCRIPT}")
 set(CMAKE_C_FLAGS "-ffreestanding -nostdlib -mthumb -mcpu=cortex-m3")
 set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")

@@ -1,13 +1,16 @@
 #include "stm32f10x.h"
-#include "system_stm32f10x.h"
+// #include "system_stm32f10x.h"
 #include "core_cm3.h"
 #include <stdbool.h>
+#include <stdint.h>
 
 static void dummySleep(uint32_t cnt)
 {
-    uint32_t i;
-    for(i = 0; i < cnt; i++)
+    uint32_t icnt;
+    for(icnt = 0; icnt < cnt; icnt++)
+    {
         __NOP();
+    }
 }
 
 static void setupUSART()
@@ -37,7 +40,7 @@ static void setupUSART()
 static void writeUSART(const char *str)
 {
     while(*str != 0) {
-        while((USART1->SR & USART_SR_TXE) == 0);
+        while((USART1->SR & USART_SR_TXE) == 0) {};
         USART1->DR = (uint8_t) *str;
         str++;
     }
