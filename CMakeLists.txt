@@ -7,8 +7,8 @@ project(bluepill-base
         LANGUAGES C ASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-#set(CMAKE_C_CLANG_TIDY clang-tidy -p build/compile_commands.json -checks=-*,clang-diagnostic-*,clang-analyzer-*,readability-*)
-add_compile_options(-Wall -Wextra -pedantic -Werror)
+set(CMAKE_C_CLANG_TIDY clang-tidy -p build/compile_commands.json -checks=-*,clang-analyzer-*,readability-*) # clang-diagnostic-*
+add_compile_options(-Wall -Wextra -pedantic) # -Werror
 
 set(LINK_SCRIPT "${CMAKE_SOURCE_DIR}/libs/stm/stm32f.ld")
 
