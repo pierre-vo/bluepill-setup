@@ -1,0 +1,8 @@
+---
+BasedOnStyle: LLVM
+AlignConsecutiveMacros: AcrossEmptyLines
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+IndentCaseLabels: true
+BreakBeforeBraces: Allman
+...
