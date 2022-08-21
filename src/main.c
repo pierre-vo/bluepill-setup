@@ -1,4 +1,4 @@
-#include "stm32f10x.h"
+#include "stm32f1xx.h"
 // #include "system_stm32f10x.h"
 #include "core_cm3.h"
 #include <stdbool.h>
