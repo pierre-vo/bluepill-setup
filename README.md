@@ -16,33 +16,21 @@ Set up code for bluepill HW
 
 ### Rust
 
+## Compile
+
+`cmake -Bbuild -G "Unix Makefiles" --toolchain arm-toolchain.cmake`
 
 ## Temporary notes
 
 
-mkdir build
-cd build
-cmake ../ -G "MinGW Makefiles"
-cmake ../ -G "MSYS Makefiles"
-cmake --build .
-
-
-
-cmake ../ -D"CMAKE_MAKE_PROGRAM:PATH=C:/App/msys64/usr/bin/make.exe" -G "MSYS Makefiles"
-
-
-```
-cmake_minimum_required(VERSION 3.0.0)
-project(MainTest VERSION 0.1.0)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(CMAKE_C_CLANG_TIDY clang-tidy -checks=-*,clang-diagnostic-*,clang-analyzer-*,readability-*)
-add_compile_options(-Wall -Wextra -pedantic -Werror)
-add_executable(MainTest src/main.c)
-```
-
-`cmake -B_builds -G "Ninja Multi-Config" --toolchain /path/to/xxx-toolchain.cmake`
-
-`cmake -B_builds -G "Ninja Multi-Config" --toolchain xxx-toolchain.cmake`
-
-
-https://github.com/montoyo/bluepill-base
+## Links
+- https://github.com/montoyo/bluepill-base
+- https://github.com/fabiovila/bluepill-freertos
+- HAL taken from: https://github.com/STMicroelectronics/stm32f1xx_hal_driver
+    - 2022-04-22 [34bbf373db7327e32c98fd5e6f2ab03ed11949d0](https://github.com/STMicroelectronics/stm32f1xx_hal_driver/tree/34bbf373db7327e32c98fd5e6f2ab03ed11949d0)
+- CMSIS st files taken from https://github.com/modm-io/cmsis-header-stm32
+    - 2022-07-05 [362dba64ef52d1e1d75b224f2bf6537065b28869](https://github.com/modm-io/cmsis-header-stm32/tree/362dba64ef52d1e1d75b224f2bf6537065b28869)
+- CMSIS files taken from https://github.com/ARM-software/CMSIS_5
+    - 2022-08-19 [e2b3ec292061c42a2ddd6f76186fab5917e1fd66](https://github.com/ARM-software/CMSIS_5/tree/e2b3ec292061c42a2ddd6f76186fab5917e1fd66)
+- https://github.com/STMicroelectronics/STM32CubeF1/blob/master/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
+- https://github.com/STMicroelectronics/STM32CubeF1

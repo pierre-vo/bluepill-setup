@@ -6,10 +6,14 @@ project(bluepill-base
         VERSION 1.0
         LANGUAGES C ASM)
 
-set(LINK_SCRIPT "${CMAKE_SOURCE_DIR}/stm32f.ld")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_C_CLANG_TIDY clang-tidy -p build/compile_commands.json -checks=-*,clang-analyzer-*,readability-*) # clang-diagnostic-*
+add_compile_options(-Wall -Wextra -pedantic) # -Werror
+
+#set(LINK_SCRIPT "${CMAKE_SOURCE_DIR}/libs/stm/stm32f.ld")
 
 # Cross-compiling settings
-#set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/arm-toolchain.cmake")
+# set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/arm-toolchain.cmake")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINK_SCRIPT}")
 set(CMAKE_C_FLAGS "-ffreestanding -nostdlib -mthumb -mcpu=cortex-m3")
 set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
@@ -19,11 +23,22 @@ set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "")
 # add the executable
 add_executable(${PROJECT_NAME}.elf
         src/main.c
-        src/core_cm3.c src/system_stm32f10x.c startup.s
+        libs/stm/startup.s
 )
 
-
 target_include_directories(${PROJECT_NAME}.elf PUBLIC inc)
+target_compile_definitions(${PROJECT_NAME}.elf PUBLIC STM32F102xB)
+
+# add_subdirectory(libs/stm)
+# target_link_libraries(${PROJECT_NAME}.elf PUBLIC stm)
+
+#add_subdirectory(external/stm32f1xx_hal_driver)
+#target_link_libraries(${PROJECT_NAME}.elf PUBLIC stm32f1xx_hal_driver)
+#target_compile_definitions(stm32f1xx_hal_driver PUBLIC STM32F102xB)
+
+#add_subdirectory(external/CMSIS)
+#target_link_libraries(${PROJECT_NAME}.elf PUBLIC CMSIS)
+#target_compile_definitions(CMSIS PUBLIC STM32F102xB)
 
 # Set the target's compiler options
 #target_compile_options(${PROJECT_NAME}.elf PRIVATE --cpu=Cortex-M4 --fpu=VFPv4_sp --dlib_config normal)
