@@ -1,81 +1,155 @@
-#include "stm32f10x.h"
-#include "system_stm32f10x.h"
-#include "core_cm3.h"
-#include <stdbool.h>
+/**
+  ******************************************************************************
+  * @file    Templates/Src/main.c 
+  * @author  MCD Application Team
+  * @brief   Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
 
-static void dummySleep(uint32_t cnt)
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/** @addtogroup STM32F1xx_HAL_Examples
+  * @{
+  */
+
+/** @addtogroup Templates
+  * @{
+  */
+
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+
+/* Private functions ---------------------------------------------------------*/
+
+/**
+  * @brief  Main program
+  * @param  None
+  * @retval None
+  */
+int main(void)
 {
-    uint32_t i;
-    for(i = 0; i < cnt; i++)
-        __NOP();
+
+  /* STM32F103xB HAL library initialization:
+       - Configure the Flash prefetch
+       - Systick timer is configured by default as source of time base, but user 
+         can eventually implement his proper time base source (a general purpose 
+         timer for example or other time source), keeping in mind that Time base 
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
+         handled in milliseconds basis.
+       - Set NVIC Group Priority to 4
+       - Low Level Initialization
+     */
+  HAL_Init();
+
+  /* Configure the system clock to 64 MHz */
+  SystemClock_Config();
+
+
+  /* Add your application code here
+     */
+
+
+  /* Infinite loop */
+  while (1)
+  {
+  }
 }
 
-static void setupUSART()
+/**
+  * @brief  System Clock Configuration
+  *         The system Clock is configured as follow : 
+  *            System Clock source            = PLL (HSI)
+  *            SYSCLK(Hz)                     = 64000000
+  *            HCLK(Hz)                       = 64000000
+  *            AHB Prescaler                  = 1
+  *            APB1 Prescaler                 = 2
+  *            APB2 Prescaler                 = 1
+  *            PLLMUL                         = 16
+  *            Flash Latency(WS)              = 2
+  * @param  None
+  * @retval None
+  */
+void SystemClock_Config(void)
 {
-    // Tx on PA.9
-    RCC->APB2ENR  |=  RCC_APB2ENR_IOPAEN;   //Enable port A clock
-    RCC->APB2RSTR |=  RCC_APB2RSTR_IOPARST; //Reset port A
-    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPARST;
+  RCC_ClkInitTypeDef clkinitstruct = {0};
+  RCC_OscInitTypeDef oscinitstruct = {0};
+  
+  /* Configure PLL ------------------------------------------------------*/
+  /* PLL configuration: PLLCLK = (HSI / 2) * PLLMUL = (8 / 2) * 16 = 64 MHz */
+  /* PREDIV1 configuration: PREDIV1CLK = PLLCLK / HSEPredivValue = 64 / 1 = 64 MHz */
+  /* Enable HSI and activate PLL with HSi_DIV2 as source */
+  oscinitstruct.OscillatorType  = RCC_OSCILLATORTYPE_HSI;
+  oscinitstruct.HSEState        = RCC_HSE_OFF;
+  oscinitstruct.LSEState        = RCC_LSE_OFF;
+  oscinitstruct.HSIState        = RCC_HSI_ON;
+  oscinitstruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  oscinitstruct.HSEPredivValue    = RCC_HSE_PREDIV_DIV1;
+  oscinitstruct.PLL.PLLState    = RCC_PLL_ON;
+  oscinitstruct.PLL.PLLSource   = RCC_PLLSOURCE_HSI_DIV2;
+  oscinitstruct.PLL.PLLMUL      = RCC_PLL_MUL16;
+  if (HAL_RCC_OscConfig(&oscinitstruct)!= HAL_OK)
+  {
+    /* Initialization Error */
+    while(1); 
+  }
 
-    RCC->APB2ENR  |=  RCC_APB2ENR_USART1EN;   //Enable USART1 clock
-    RCC->APB2RSTR |=  RCC_APB2RSTR_USART1RST; //Reset USART1
-    RCC->APB2RSTR &= ~RCC_APB2RSTR_USART1RST;
-
-    //Configure USART
-    USART1->CR1 &= ~USART_CR1_UE;
-    USART1->CR1  = USART_CR1_TE | USART_CR1_RE;
-    USART1->CR2  = 0;
-    USART1->CR3  = 0;
-    USART1->BRR  = 0x271; //115200 bauds for 72 MHz
-    USART1->GTPR = 1;
-
-    //Configure pins & enable USART
-    GPIOA->CRH = (GPIOA->CRH & ~(GPIO_CRH_CNF9 | GPIO_CRH_MODE9)) | GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9_1 | GPIO_CRH_MODE9_0;
-    USART1->CR1 |= USART_CR1_UE;
+  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
+     clocks dividers */
+  clkinitstruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+  clkinitstruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  clkinitstruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  clkinitstruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  clkinitstruct.APB1CLKDivider = RCC_HCLK_DIV2;  
+  if (HAL_RCC_ClockConfig(&clkinitstruct, FLASH_LATENCY_2)!= HAL_OK)
+  {
+    /* Initialization Error */
+    while(1); 
+  }
 }
 
-static void writeUSART(const char *str)
-{
-    while(*str != 0) {
-        while((USART1->SR & USART_SR_TXE) == 0);
-        USART1->DR = (uint8_t) *str;
-        str++;
-    }
+#ifdef  USE_FULL_ASSERT
+
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t* file, uint32_t line)
+{ 
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+  /* Infinite loop */
+  while (1)
+  {
+  }
 }
+#endif
 
-static void setupLED_B()
-{
-    RCC->APB2ENR  |= RCC_APB2ENR_IOPBEN;   //Enable port B clock
-    RCC->APB2RSTR |= RCC_APB2RSTR_IOPBRST; //Reset port B
-    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPBRST;
+/**
+  * @}
+  */
 
-    GPIOB->CRL = (GPIOB->CRL & ~GPIO_CRL_CNF2) | GPIO_CRL_MODE2_1; //Output 2 MHz
-}
+/**
+  * @}
+  */
 
-static void setupLED_C()
-{
-    RCC->APB2ENR  |= RCC_APB2ENR_IOPCEN;   //Enable port C clock
-    RCC->APB2RSTR |= RCC_APB2RSTR_IOPCRST; //Reset port C
-    RCC->APB2RSTR &= ~RCC_APB2RSTR_IOPCRST;
-
-    GPIOC->CRH = (GPIOC->CRH & ~GPIO_CRH_CNF13) | GPIO_CRH_MODE13_1; //Output 2 MHz
-}
-
-void main()
-{
-    //Called by startup.s
-    SystemInit(); //Initialize clock to 72 MHz
-    setupUSART(); //Initialize USART to 115200 bauds
-    setupLED_B();
-    setupLED_C();
-
-    while(true) {
-        //Blink
-        GPIOB->ODR ^= GPIO_ODR_ODR2; // B2, not working?
-        GPIOC->ODR ^= GPIO_ODR_ODR13; // C13
-        writeUSART("It works!\r\n");
-        ITM_SendChar('a');
-        dummySleep(500000U);
-    }
-}
-
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
