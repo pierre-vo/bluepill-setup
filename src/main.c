@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f1xx.h"
 
 /** @addtogroup STM32F1xx_HAL_Examples
   * @{
@@ -32,10 +33,22 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/* WWDG handler declaration */
+static WWDG_HandleTypeDef   WwdgHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
+
+static void dummySleep(uint32_t cnt)
+{
+  uint32_t icnt;
+  for (icnt = 0; icnt < cnt; icnt++)
+  {
+    __NOP();
+  }
+}
 
 /**
   * @brief  Main program
@@ -60,14 +73,41 @@ int main(void)
   /* Configure the system clock to 64 MHz */
   SystemClock_Config();
 
+  /*##-2- Configure the WWDG peripheral ######################################*/
+  /* WWDG clock counter = (PCLK1 (32MHz)/4096)/8) = 976.56 Hz (~1024 us) 
+     WWDG Window value = 80 means that the WWDG counter should be refreshed only 
+     when the counter is below 80 (and greater than 64/0x40) otherwise a reset will 
+     be generated. 
+     WWDG Counter value = 127, WWDG timeout = ~1024 us * 64 = 65 ms */
+  WwdgHandle.Instance = WWDG;
+
+  WwdgHandle.Init.Prescaler = WWDG_PRESCALER_1; //WWDG_PRESCALER_8;
+  WwdgHandle.Init.Window    = 80U;
+  WwdgHandle.Init.Counter   = 127U;
+
+  if (HAL_WWDG_Init(&WwdgHandle) != HAL_OK)
+  {
+    /* Initialization Error */
+    Error_Handler();
+  }
+  CLEAR_BIT(WwdgHandle.Instance->CR, WWDG_CR_WDGA);
+
 
   /* Add your application code here
      */
-
+  BSP_LED_Init(LED_BLUE);
 
   /* Infinite loop */
   while (1)
   {
+    BSP_LED_Toggle(LED_BLUE);
+    dummySleep(5U);
+
+    /* Refresh WWDG */
+    // if (HAL_WWDG_Refresh(&WwdgHandle) != HAL_OK)
+    // {
+    //   Error_Handler();
+    // }
   }
 }
 
@@ -120,6 +160,22 @@ void SystemClock_Config(void)
   {
     /* Initialization Error */
     while(1); 
+  }
+}
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param  None
+  * @retval None
+  */
+static void Error_Handler(void)
+{
+  /* Turn LED2 off */
+//   BSP_LED_Off(LED2);
+
+  while(1)
+  {
+    __NOP();
   }
 }
 

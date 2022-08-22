@@ -46,11 +46,11 @@ target_compile_definitions(${PROJECT_NAME}.elf PUBLIC STM32F103xB)
 
 ### BSP
 add_library(BSP STATIC
-    BSP/STM32F1xx_Nucleo/stm32f1xx_nucleo.c
+    BSP/STM32F1xx_Bluepill/stm32f1xx_bluepill.c
 )
 target_include_directories(BSP PUBLIC
     inc
-    BSP/STM32F1xx_Nucleo
+    BSP/STM32F1xx_Bluepill
     external/STM32CubeF1/Drivers/STM32F1xx_HAL_Driver/Inc
     external/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include
     external/STM32CubeF1/Drivers/CMSIS/Include
